@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata: Metadata = {
   title: "Open Source Governance & Architecture — Reader",
   description:
-    "Reader is open source under the Apache 2.0 license. Built by Edgar Odey.",
+    "Reader is open-source for non-commercial educational use under the PolyForm Noncommercial License. Built by Edgar Odey.",
 };
 
 export default function OpenSourcePage() {
@@ -18,8 +18,8 @@ export default function OpenSourcePage() {
           Built openly for the academic community
         </h1>
         <p className="text-base text-slate-600">
-          Reader is released under the Apache-2.0 License. Built by Edgar Odey and open to student
-          and developer contributions.
+          Reader is released under the PolyForm Noncommercial License 1.0.0. Free and open for students,
+          educators, and developers, strictly protecting the project from proprietary commercial exploitation.
         </p>
       </div>
 

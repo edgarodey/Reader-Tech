@@ -29,7 +29,7 @@ export function Footer() {
               Help & FAQ
             </Link>
             <Link href="/open-source" className="hover:text-brand-600 transition-colors font-medium">
-              Open Source (Apache 2.0)
+              Open Source (PolyForm NC)
             </Link>
             <Link href="/settings" className="hover:text-brand-600 transition-colors font-medium">
               Privacy & Settings

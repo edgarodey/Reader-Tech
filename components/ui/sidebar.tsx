@@ -69,7 +69,7 @@ export function Sidebar() {
     { href: "/settings", label: "Settings", icon: Settings, desc: "Speech voices & reading style" },
     { href: "/about", label: "About", icon: BookOpen, desc: "Mission & architecture" },
     { href: "/help", label: "Help & FAQ", icon: HelpCircle, desc: "Guides and troubleshooting" },
-    { href: "/open-source", label: "Open Source", icon: Code, desc: "Apache 2.0 repository" },
+    { href: "/open-source", label: "Open Source", icon: Code, desc: "PolyForm NC repository" },
   ];
 
   return (

@@ -62,4 +62,5 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📄 License
 
-Licensed under the [Apache License, Version 2.0](./LICENSE). Built by Edgar Odey.
+Licensed under the [PolyForm Noncommercial License 1.0.0](./LICENSE) (strictly non-commercial, open for academic and community study). Built by Edgar Odey.
+
