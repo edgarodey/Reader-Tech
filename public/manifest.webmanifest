@@ -1,0 +1,17 @@
+{
+  "name": "Reader — Local-First PDF Study Reader",
+  "short_name": "Reader",
+  "description": "Free, local-first academic study reader for listening to course PDFs. Built by Edgar Odey.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#05233d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/images/Reader-Logo-nobg.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
