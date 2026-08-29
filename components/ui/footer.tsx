@@ -40,7 +40,15 @@ export function Footer() {
         <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
           <span>Designed for university students and distance learners everywhere</span>
           <span className="flex items-center gap-1 font-medium text-slate-700">
-            Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by Edgar Odey
+            Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by{" "}
+            <a
+              href="https://edgarodey.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-600 hover:text-brand-800 font-semibold underline decoration-brand-300 underline-offset-2 transition-colors"
+            >
+              Edgar Odey
+            </a>
           </span>
         </div>
       </div>

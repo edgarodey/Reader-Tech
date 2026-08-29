@@ -21,7 +21,10 @@ import { VoiceOption } from "@/lib/tts/types";
 import { clearAllLocalData, getAllDocuments } from "@/lib/storage/documents";
 import { formatBytes } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default function SettingsPage() {
+  const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<SettingsRecord>(DEFAULT_SETTINGS);
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [docCount, setDocCount] = useState(0);
@@ -30,6 +33,7 @@ export default function SettingsPage() {
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     getSettings().then(setSettings);
 
     const controller = getSpeechController();
@@ -253,10 +257,10 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-              <div>
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-900">Locally Cached Materials</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 mt-0.5">
                   {docCount} course documents • ~{formatBytes(totalSize)} stored in IndexedDB
                 </p>
               </div>
@@ -264,6 +268,7 @@ export default function SettingsPage() {
                 variant="danger"
                 size="sm"
                 onClick={() => setConfirmClearOpen(true)}
+                className="shrink-0 w-full sm:w-auto text-xs"
               >
                 <Trash2 className="w-4 h-4 mr-1.5" />
                 Clear Local Data

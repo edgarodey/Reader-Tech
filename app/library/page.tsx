@@ -23,6 +23,8 @@ interface DocWithProgress extends DocumentRecord {
   progressPercent?: number;
 }
 
+export const dynamic = "force-dynamic";
+
 export default function LibraryPage() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocWithProgress[]>([]);

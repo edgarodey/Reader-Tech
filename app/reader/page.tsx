@@ -24,6 +24,8 @@ import { TTSStatus, VoiceOption } from "@/lib/tts/types";
 import { getOrLoadPDFDocument, renderPDFPageToCanvas } from "@/lib/pdf/render";
 import { performPageOCR } from "@/lib/ocr/ocr-worker";
 
+export const dynamic = "force-dynamic";
+
 function ReaderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();

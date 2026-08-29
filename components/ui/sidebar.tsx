@@ -34,15 +34,19 @@ export function useSidebar() {
 }
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  // Default open on desktop, closed on small mobile
-  const [isOpen, setIsOpen] = useState(true);
+  // Always default to closed for clean centered view on all screens
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Auto-detect mobile screen on mount to avoid covering mobile screen initially
+  // Close on Escape key
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setIsOpen(false);
-    }
-  }, []);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
@@ -57,41 +61,41 @@ export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, setIsOpen } = useSidebar();
 
-  // Close sidebar on mobile when route changes
+  // Close sidebar when route changes
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setIsOpen(false);
-    }
+    setIsOpen(false);
   }, [pathname, setIsOpen]);
 
   const navLinks = [
     { href: "/library", label: "Library", icon: Library, desc: "Your saved course PDFs" },
     { href: "/settings", label: "Settings", icon: Settings, desc: "Speech voices & reading style" },
-    { href: "/about", label: "About", icon: BookOpen, desc: "Mission & architecture" },
-    { href: "/help", label: "Help & FAQ", icon: HelpCircle, desc: "Guides and troubleshooting" },
-    { href: "/open-source", label: "Open Source", icon: Code, desc: "PolyForm NC repository" },
+    { href: "/about", label: "About", icon: BookOpen, desc: "Origin story & mission" },
+    { href: "/help", label: "Help & FAQ", icon: HelpCircle, desc: "Interactive student guides" },
+    { href: "/open-source", label: "Open Source", icon: Code, desc: "GitHub & Non-commercial license" },
   ];
 
   return (
     <>
-      {/* Mobile Backdrop */}
+      {/* Backdrop (Active whenever sidebar is open on any screen size) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 transition-opacity duration-300 animate-in fade-in"
           onClick={() => setIsOpen(false)}
+          aria-hidden="true"
         />
       )}
 
       {/* Sidebar Drawer */}
       <aside
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col justify-between shadow-xl lg:shadow-none transition-transform duration-300 ease-in-out",
+          "fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white border-r border-slate-200 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
+        aria-label="Sidebar Navigation"
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2.5 group" onClick={() => setIsOpen(false)}>
             <div className="relative w-8 h-8 rounded-xl overflow-hidden shadow-xs flex items-center justify-center bg-white border border-slate-200">
               <Image
                 src="/assets/images/Reader-Logo-nobg.png"
@@ -135,6 +139,7 @@ export function Sidebar() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setIsOpen(false)}
                 className={cn(
                   "flex items-center justify-between p-2.5 rounded-2xl text-sm font-medium transition-all group",
                   isActive
@@ -177,7 +182,15 @@ export function Sidebar() {
           </div>
 
           <div className="text-center text-[11px] text-slate-500 font-medium flex items-center justify-center gap-1">
-            Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by Edgar Odey
+            Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by{" "}
+            <a
+              href="https://edgarodey.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-600 hover:text-brand-800 font-semibold underline decoration-brand-300 underline-offset-2 transition-colors"
+            >
+              Edgar Odey
+            </a>
           </div>
         </div>
       </aside>
