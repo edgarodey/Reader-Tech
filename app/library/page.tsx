@@ -86,12 +86,14 @@ export default function LibraryPage() {
           </p>
         </div>
 
-        <Link href="/">
-          <Button variant="primary" size="md">
-            <Plus className="w-4 h-4 mr-1.5" />
-            Upload New PDF
-          </Button>
-        </Link>
+        {!loading && documents.length > 0 && (
+          <Link href="/">
+            <Button variant="primary" size="md">
+              <Plus className="w-4 h-4 mr-1.5" />
+              Upload New PDF
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Search Bar */}

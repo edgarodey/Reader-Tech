@@ -1,130 +1,329 @@
-import React from "react";
-import type { Metadata } from "next";
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   Terminal,
   GitPullRequest,
   Github,
   ShieldCheck,
-  Code2,
+  CheckCircle2,
+  XCircle,
+  Copy,
+  Check,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  Scale,
+  Sparkles,
+  Lock,
+  Layers,
+  Heart
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-export const metadata: Metadata = {
-  title: "Open Source Repository & Governance — Reader",
-  description:
-    "Explore Reader's open source repository on GitHub, built by Edgar Odey under the PolyForm Noncommercial License 1.0.0.",
-};
+const LICENSE_TEXT = `PolyForm Noncommercial License 1.0.0
+<https://polyformproject.org/licenses/noncommercial/1.0.0>
+
+Copyright 2026 Edgar Odey / Reader Open Source Project (https://reader.edgarodey.com)
+
+## Acceptance
+In order to receive this license, you must agree to its rules. The rules of this license are both obligations under that agreement and conditions to your license. You must not do anything with this software that triggers a rule you cannot or will not follow.
+
+## Copyright License
+The licensor grants you a copyright license for this software to do everything you might do with the software that would otherwise infringe the licensor's copyright in it, for any permitted purpose. However, you may only use the software for permitted purposes, and you may only distribute copies and changes to the software for permitted purposes.
+
+## Permitted Purposes
+Permitted purpose is any purpose other than a commercial purpose.
+Commercial purpose is any purpose that is intended for or directed toward commercial advantage or monetary compensation.
+
+## Attribution
+You must retain all copyright and other notices from the licensor in the software and must include a copy of this license with any copy or modification you distribute.
+
+## Fair Use
+You may have rights under the law, such as "fair use", that cannot be limited by a license. This license does not affect those rights.
+
+## No Other Rights
+These terms do not give you any other rights, including rights under patent, trademark, or other intellectual property law.
+
+## Disclaimer
+As far as the law allows, this software comes as is, without any warranty or condition, and the licensor will not be liable to you for any damages arising out of these terms or your use of the software.`;
 
 export default function OpenSourcePage() {
+  const [copiedClone, setCopiedClone] = useState(false);
+  const [copiedLicense, setCopiedLicense] = useState(false);
+  const [showFullLicense, setShowFullLicense] = useState(false);
+
+  const handleCopyClone = () => {
+    navigator.clipboard.writeText("git clone https://github.com/edgarodey/Reader-Tech.git");
+    setCopiedClone(true);
+    setTimeout(() => setCopiedClone(false), 2000);
+  };
+
+  const handleCopyLicense = () => {
+    navigator.clipboard.writeText(LICENSE_TEXT);
+    setCopiedLicense(true);
+    setTimeout(() => setCopiedLicense(false), 2000);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white flex-1">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white flex-1">
       {/* Header */}
       <div className="space-y-4 text-center md:text-left mb-10">
-        <Badge variant="brand" className="py-1 px-3.5 text-xs font-semibold">
-          <Github className="w-3.5 h-3.5 mr-1.5 text-brand-600" />
-          Open Source Repository & Architecture
-        </Badge>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Built openly for students, educators & developers
+        <div className="inline-flex items-center gap-2">
+          <Badge variant="brand" className="py-1 px-3.5 text-xs font-semibold shadow-xs">
+            <Scale className="w-3.5 h-3.5 mr-1.5 text-brand-600" />
+            Open Source & Noncommercial License
+          </Badge>
+        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          Built openly for students, educators & researchers
         </h1>
-        <p className="text-base text-slate-600">
-          Reader is released under the <strong>PolyForm Noncommercial License 1.0.0</strong> to keep it
-          free forever and prevent proprietary commercial exploitation.
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed">
+          Reader is an open-source project released under the{" "}
+          <strong className="text-slate-900 font-semibold">PolyForm Noncommercial License 1.0.0</strong>.
+          It is free forever for personal study, teaching, and non-commercial academic research.
         </p>
       </div>
 
-      <div className="space-y-8">
-        {/* GitHub Repository Card */}
-        <section className="p-7 rounded-3xl bg-slate-900 text-white shadow-xl space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white border border-white/20">
-                <Github className="w-6 h-6" />
+      <div className="space-y-10">
+        {/* GitHub Repository Hero Card */}
+        <section className="p-7 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-xl space-y-6 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative z-10">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white border border-white/15 shadow-inner">
+                <Github className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">edgarodey / Reader-Tech</h2>
-                <p className="text-xs text-slate-400">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                    edgarodey / Reader-Tech
+                  </h2>
+                  <span className="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 text-[10px] font-bold uppercase tracking-wider border border-brand-400/30">
+                    Public
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
                   Official Public Repository • Next.js 14, Web Speech, PDF.js, Tesseract.js
                 </p>
               </div>
             </div>
 
+            <div className="flex items-center gap-2.5 shrink-0">
+              <a
+                href="https://github.com/edgarodey/Reader-Tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-md active:scale-95"
+              >
+                <Github className="w-4 h-4" /> View on GitHub <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Terminal Command Snippet */}
+          <div className="relative p-4 rounded-2xl bg-black/50 border border-white/10 font-mono text-xs text-slate-300 flex items-center justify-between gap-3 overflow-x-auto">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-slate-500 select-none">$</span>
+              <span className="text-emerald-400">git clone</span>
+              <span className="text-slate-200 truncate">https://github.com/edgarodey/Reader-Tech.git</span>
+            </div>
+            <button
+              onClick={handleCopyClone}
+              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors shrink-0"
+              title="Copy git clone command"
+            >
+              {copiedClone ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+        </section>
+
+        {/* License Permission Matrix (What You Can Do vs Prohibited) */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-600" />
+            <h2 className="text-xl font-bold text-slate-900">License Breakdown: PolyForm Noncommercial 1.0.0</h2>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600">
+            This license is designed to keep Reader open and accessible for all students, while preventing third parties from taking the software and packaging it into a paid commercial product.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+            {/* Allowed Card */}
+            <div className="p-6 rounded-3xl bg-emerald-50/60 border border-emerald-200/80 shadow-xs space-y-3.5">
+              <div className="flex items-center gap-2 text-emerald-900 font-bold text-sm sm:text-base">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <h3>What You Can Freely Do (Permitted)</h3>
+              </div>
+              <ul className="space-y-2 text-xs sm:text-sm text-emerald-950">
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">•</span>
+                  <span><strong>Personal study & learning:</strong> Use Reader freely on all your devices to study coursework.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">•</span>
+                  <span><strong>Academic & classroom use:</strong> Share with students, lecturers, universities, and study groups.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">•</span>
+                  <span><strong>Open source contributions:</strong> Inspect source code, fix bugs, add voices, and submit pull requests.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">•</span>
+                  <span><strong>Self-hosting & fork for non-commercial:</strong> Run your own private instance for non-monetized purposes.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Prohibited Card */}
+            <div className="p-6 rounded-3xl bg-rose-50/60 border border-rose-200/80 shadow-xs space-y-3.5">
+              <div className="flex items-center gap-2 text-rose-900 font-bold text-sm sm:text-base">
+                <XCircle className="w-5 h-5 text-rose-600 shrink-0" />
+                <h3>What Is Prohibited (Commercial Restriction)</h3>
+              </div>
+              <ul className="space-y-2 text-xs sm:text-sm text-rose-950">
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-600 font-bold">•</span>
+                  <span><strong>Selling access:</strong> Charging users a fee or subscription to access Reader.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-600 font-bold">•</span>
+                  <span><strong>Commercial bundling:</strong> Wrapping Reader into a commercial closed-source SaaS product.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-600 font-bold">•</span>
+                  <span><strong>Paid ad networks / monetization:</strong> Running paywalls or monetized commercial wrappers around the core engine.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-600 font-bold">•</span>
+                  <span><strong>Removing attribution:</strong> Removing original copyright and license notices.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Full Legal Text Accordion */}
+        <section className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <Scale className="w-5 h-5 text-slate-700" />
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Official Legal License Text</h3>
+                <p className="text-xs text-slate-500">PolyForm Noncommercial License 1.0.0</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopyLicense}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+              >
+                {copiedLicense ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" /> Copied Text
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-500" /> Copy License
+                  </>
+                )}
+              </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-brand-600 text-xs"
+                onClick={() => setShowFullLicense(!showFullLicense)}
+              >
+                {showFullLicense ? "Collapse" : "View Full Text"}
+              </Button>
+            </div>
+          </div>
+
+          {showFullLicense && (
+            <div className="mt-4 p-5 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-xs text-slate-700 whitespace-pre-wrap leading-relaxed overflow-x-auto max-h-96">
+              {LICENSE_TEXT}
+            </div>
+          )}
+
+          <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100">
+            <span>Standardized by the PolyForm Project</span>
             <a
-              href="https://github.com/edgarodey/Reader-Tech"
+              href="https://polyformproject.org/licenses/noncommercial/1.0.0"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-md shrink-0"
+              className="text-brand-600 hover:underline flex items-center gap-1"
             >
-              <Github className="w-4 h-4" /> View on GitHub <ExternalLink className="w-3 h-3 ml-1" />
+              Verify on polyformproject.org <ExternalLink className="w-3 h-3" />
             </a>
           </div>
-
-          <div className="p-4 rounded-2xl bg-black/40 border border-white/10 font-mono text-xs text-slate-300 overflow-x-auto">
-            <div className="text-slate-500 mb-1"># Clone repository locally</div>
-            <span className="text-emerald-400">git clone</span> https://github.com/edgarodey/Reader-Tech.git
-          </div>
         </section>
 
-        {/* Tech Stack */}
-        <section className="p-7 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Terminal className="w-5 h-5 text-brand-600" />
-            Core Technology Architecture
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm text-slate-700">
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <strong className="text-slate-900 block mb-1 font-semibold">Frontend Framework</strong>
-              Next.js 14 App Router, React 18, TypeScript, Tailwind CSS
+        {/* Tech Stack Architecture */}
+        <section className="p-7 rounded-3xl bg-slate-50/80 border border-slate-200/90 space-y-5">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-lg">
+            <Layers className="w-5 h-5 text-brand-600" />
+            <h2>Core Technology Architecture</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <strong className="text-slate-900 block font-semibold">Frontend & Routing</strong>
+              <p className="text-xs text-slate-600">Next.js 14 App Router, React 18, TypeScript, Tailwind CSS.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <strong className="text-slate-900 block mb-1 font-semibold">PDF Engine</strong>
-              PDF.js Client Worker (Text layer normalization & page canvas render)
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <strong className="text-slate-900 block font-semibold">PDF Text & Rendering</strong>
+              <p className="text-xs text-slate-600">PDF.js Web Worker for client text extraction and high-DPI canvas preview.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <strong className="text-slate-900 block mb-1 font-semibold">Client OCR Engine</strong>
-              Tesseract.js WebAssembly Worker (On-device scanned PDF text recognition)
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <strong className="text-slate-900 block font-semibold">Client-Side OCR Worker</strong>
+              <p className="text-xs text-slate-600">Tesseract.js WebAssembly Worker for on-demand text recognition in scanned handouts.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <strong className="text-slate-900 block mb-1 font-semibold">Speech & Local Storage</strong>
-              Web Speech API (`SpeechSynthesis`), IndexedDB via `idb`
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <strong className="text-slate-900 block font-semibold">Speech & Local DB</strong>
+              <p className="text-xs text-slate-600">Web Speech API (`SpeechSynthesis`) and local IndexedDB sandbox via `idb`.</p>
             </div>
           </div>
-        </section>
-
-        {/* Non-Commercial License Protection */}
-        <section className="p-7 rounded-3xl bg-white border border-slate-200/90 shadow-xs space-y-3">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            PolyForm Noncommercial License 1.0.0
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Reader is strictly open and free for academic study, research, student self-learning, and
-            open-source non-commercial improvement. Commercial distribution, selling access, or wrapping
-            the codebase into a proprietary commercial service is strictly prohibited by law.
-          </p>
         </section>
 
         {/* How to Contribute & Author Bio */}
-        <section className="p-7 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <section className="p-7 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-lg">
             <GitPullRequest className="w-5 h-5 text-brand-600" />
-            Contributing to Reader
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Pull requests are welcomed for voice accessibility optimizations, performance improvements,
-            localized Nigerian accent heuristics, and reflow typography tweaks. All contributions must
-            adhere to TypeScript strict mode and maintain 100% local-first privacy.
+            <h2>Contributing Guidelines</h2>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            We welcome issues and pull requests from students and developers worldwide!
+            Priorities include Nigerian accent speech heuristics, offline WASM TTS integration,
+            e-courseware parsing rules, and accessibility enhancements.
           </p>
-          <div className="pt-2">
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+              <strong className="text-slate-900 block mb-1">1. Local Privacy First</strong>
+              Zero server upload endpoints. Keep all document processing on-device.
+            </div>
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+              <strong className="text-slate-900 block mb-1">2. Strict TypeScript</strong>
+              Strict typing and clean modular abstractions across all components.
+            </div>
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+              <strong className="text-slate-900 block mb-1">3. Accessible UI</strong>
+              High contrast, keyboard navigation, and responsive mobile-first layouts.
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <span className="text-slate-500">
+              Have questions or want to collaborate? Reach out to the creator.
+            </span>
             <a
               href="https://edgarodey.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-semibold text-brand-600 hover:text-brand-800 underline decoration-brand-300 underline-offset-2"
+              className="text-brand-600 hover:text-brand-800 font-semibold underline decoration-brand-300 underline-offset-2 flex items-center gap-1"
             >
-              Created with ❤️ by Edgar Odey • Visit edgarodey.com
+              Edgar Odey • edgarodey.com <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </section>

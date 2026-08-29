@@ -39,8 +39,8 @@ Reader transforms static, dense course PDFs into a responsive, reflowable study 
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/reader-tech.git
-cd reader-tech
+git clone https://github.com/edgarodey/Reader-Tech.git
+cd Reader-Tech
 
 # 2. Install dependencies
 npm install

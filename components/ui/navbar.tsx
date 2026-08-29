@@ -48,9 +48,13 @@ export function Navbar() {
 
         {/* Right: Clean & uncluttered — Quick Upload Action */}
         <div className="flex items-center gap-2">
-          <Link href="/">
-            <Button variant="secondary" size="sm" className="h-9 px-3 text-xs font-semibold text-brand-800">
-              <Plus className="w-4 h-4 mr-1 text-brand-600" />
+          <Link href="/" title="Upload PDF">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-8 w-8 sm:w-auto sm:h-9 p-0 sm:px-3 text-xs font-semibold text-brand-800 flex items-center justify-center rounded-xl transition-all hover:bg-brand-50 hover:border-brand-300"
+            >
+              <Plus className="w-4 h-4 text-brand-600 sm:mr-1.5 shrink-0" />
               <span className="hidden sm:inline">Upload PDF</span>
             </Button>
           </Link>

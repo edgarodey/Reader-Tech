@@ -159,15 +159,15 @@ export function FilePicker({ className }: FilePickerProps) {
               </Button>
             </div>
 
-            <div className="pt-2 flex items-center justify-center gap-4 text-xs text-slate-500">
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 100% Private (In-Browser)
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] sm:text-xs text-slate-500">
+              <span className="inline-flex items-center gap-1 shrink-0 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> 100% Private (In-Browser)
               </span>
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" /> Web Speech TTS
+              <span className="inline-flex items-center gap-1 shrink-0 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-brand-600 shrink-0" /> Web Speech TTS
               </span>
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" /> Client OCR
+              <span className="inline-flex items-center gap-1 shrink-0 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Client OCR
               </span>
             </div>
           </div>
