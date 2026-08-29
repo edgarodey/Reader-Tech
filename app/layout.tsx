@@ -19,22 +19,34 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://reader-tech.vercel.app"),
-  title: "Reader — Free, Local-First PDF Study Reader",
+  title: {
+    default: "Reader — Free, Local-First Academic PDF Study Companion",
+    template: "%s | Reader",
+  },
   description:
-    "Study your course PDFs hands-free with synchronized speech, reflowable mobile reading view, client-side OCR, and zero cloud uploads. Built by Edgar Odey.",
+    "Study your university course PDFs hands-free with synchronized speech, reflowable mobile reading view, client-side OCR, and zero cloud uploads. 100% private in your browser. Built by Edgar Odey.",
   keywords: [
     "PDF reader",
     "Text to speech PDF",
-    "audio study",
+    "audio study companion",
     "local-first PDF",
     "open source PDF TTS",
-    "Edgar Odey"
+    "academic PDF reader",
+    "Edgar Odey",
+    "offline study tool",
+    "student PDF reader",
   ],
-  authors: [{ name: "Edgar Odey" }],
+  authors: [{ name: "Edgar Odey", url: "https://edgarodey.com" }],
   creator: "Edgar Odey",
+  publisher: "Edgar Odey",
+  applicationName: "Reader",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/assets/images/Reader-Logo-nobg.png",
+    icon: [
+      { url: "/assets/images/Reader-Logo-nobg.png" },
+      { url: "/assets/images/Reader-Logo-nobg.png", sizes: "192x192", type: "image/png" },
+      { url: "/assets/images/Reader-Logo-nobg.png", sizes: "512x512", type: "image/png" },
+    ],
     shortcut: "/assets/images/Reader-Logo-nobg.png",
     apple: "/assets/images/Reader-Logo-nobg.png",
   },
@@ -42,27 +54,40 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://reader-tech.vercel.app",
-    title: "Reader — Study Course PDFs by Listening",
-    description: "Free, local-first academic study reader with dual reflowable and original PDF views. Built by Edgar Odey.",
     siteName: "Reader",
+    title: "Reader — Free, Local-First Academic PDF Study Companion",
+    description:
+      "Study your university course PDFs hands-free with synchronized speech, reflowable mobile reading view, client-side OCR, and zero cloud uploads. Built by Edgar Odey.",
     images: [
       {
-        url: "/assets/images/Reader-Logo-nobg.png",
-        width: 512,
-        height: 512,
-        alt: "Reader Logo",
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Reader — Free, Local-First Academic PDF Study Companion (Built by Edgar Odey)",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Reader — Local-First PDF Study Reader",
-    description: "Listen to university course PDFs with synchronized sentence highlights. Built by Edgar Odey.",
-    images: ["/assets/images/Reader-Logo-nobg.png"],
+    title: "Reader — Free, Local-First Academic PDF Study Companion",
+    description:
+      "Listen to university course PDFs hands-free with synchronized sentence highlights, reflowable mobile reader, and client-side OCR. 100% in-browser privacy.",
+    images: ["/opengraph-image"],
+    creator: "@edgarodey",
+  },
+  alternates: {
+    canonical: "https://reader-tech.vercel.app",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
