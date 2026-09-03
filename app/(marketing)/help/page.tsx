@@ -15,6 +15,7 @@ import {
   ScanText
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { FollowSocials } from "@/components/ui/social-links";
 
 interface FAQItem {
   id: string;
@@ -31,6 +32,13 @@ const FAQS: FAQItem[] = [
     icon: BookOpen,
     q: "How do I upload and start listening to my course PDF?",
     a: "Simply drag and drop your course PDF into the upload box on the Home page, or click to browse files from your computer or smartphone. Reader will immediately parse the document and open the reflowable study reader. Tap the Play button on the bottom bar to begin listening instantly.",
+  },
+  {
+    id: "community-questions",
+    category: "Community & Support",
+    icon: HelpCircle,
+    q: "How do I ask questions, report bugs, or share feedback?",
+    a: "You can join our official Reader Telegram Community (https://t.me/+3ITyC9dA8Kw0MzVk) to connect directly with creator Edgar Odey, share feedback, report issues, and interact with fellow university students and distance learners. You can also reach out on X (@edgar0dey) and Instagram (@odeyedgar).",
   },
   {
     id: "data-consumption",
@@ -77,17 +85,15 @@ const FAQS: FAQItem[] = [
 ];
 
 export default function HelpPage() {
-  // Allow multiple or single open tabs
-  const [openIds, setOpenIds] = useState<string[]>(["upload-listen", "data-consumption"]);
+  // Only one FAQ expanded at a time
+  const [openId, setOpenId] = useState<string | null>("upload-listen");
 
   const toggleFAQ = (id: string) => {
-    setOpenIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setOpenId((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white flex-1">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 bg-white flex-1">
       {/* Page Header */}
       <div className="space-y-4 text-center md:text-left mb-10">
         <Badge variant="brand" className="py-1 px-3.5 text-xs font-semibold">
@@ -105,7 +111,7 @@ export default function HelpPage() {
       {/* Accordion FAQ List */}
       <div className="space-y-3.5">
         {FAQS.map((faq) => {
-          const isOpen = openIds.includes(faq.id);
+          const isOpen = openId === faq.id;
           const Icon = faq.icon;
 
           return (
@@ -181,6 +187,9 @@ export default function HelpPage() {
           Contact Edgar Odey <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
         </a>
       </section>
+
+      {/* Follow on Socials Card */}
+      <FollowSocials variant="card" title="Follow Edgar on socials for updates" className="mt-6" />
     </div>
   );
 }

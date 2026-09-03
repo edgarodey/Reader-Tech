@@ -114,7 +114,11 @@ function ReaderContent() {
           if (matchIdx >= 0) initialChunkIdx = matchIdx;
         }
 
-        controller.loadChunks(docId!, speechChunks, initialChunkIdx);
+        controller.loadChunks(docId!, speechChunks, initialChunkIdx, {
+          name: doc.fileName,
+          totalPages: doc.pageCount,
+        });
+        controller.setDocumentInfo(doc.fileName, doc.pageCount);
         controller.setOptions({
           rate: userSettings.rate,
           pitch: userSettings.pitch,
@@ -198,7 +202,19 @@ function ReaderContent() {
       const newChunks = createSpeechChunks(updatedBlocks);
       setChunks(newChunks);
       if (speechControllerRef.current) {
-        speechControllerRef.current.loadChunks(documentRecord.id, newChunks, currentChunkIndex);
+        const wasPlaying = status === "playing";
+        speechControllerRef.current.loadChunks(
+          documentRecord.id,
+          newChunks,
+          currentChunkIndex >= 0 ? currentChunkIndex : 0,
+          {
+            name: documentRecord.fileName,
+            totalPages: documentRecord.pageCount,
+          }
+        );
+        if (wasPlaying) {
+          speechControllerRef.current.play();
+        }
       }
 
       setOcrProgressMsg("OCR Complete!");
@@ -231,6 +247,10 @@ function ReaderContent() {
 
   const handlePrev = () => {
     speechControllerRef.current?.prevChunk();
+  };
+
+  const handleUnstick = () => {
+    speechControllerRef.current?.unstick();
   };
 
   const handleSeekPercent = (percent: number) => {
@@ -358,6 +378,7 @@ function ReaderContent() {
         voices={voices}
         selectedVoiceId={settings?.voiceId}
         onSelectVoice={handleSelectVoice}
+        onUnstick={handleUnstick}
       />
     </div>
   );

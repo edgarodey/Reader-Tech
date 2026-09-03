@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
+import { FollowSocials } from "@/components/ui/social-links";
 import { getSettings, saveSettings, DEFAULT_SETTINGS } from "@/lib/storage/settings";
 import { SettingsRecord } from "@/lib/storage/db";
 import { getSpeechController } from "@/lib/tts/speech-controller";
@@ -68,7 +69,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 bg-white">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1 bg-white">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2.5">
@@ -284,6 +285,9 @@ export default function SettingsPage() {
           </div>
         </section>
       </div>
+
+      {/* Follow on Socials Section */}
+      <FollowSocials variant="card" title="Follow Edgar on socials for updates" className="mt-8" />
 
       {/* Confirmation Modal */}
       <Modal

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BookOpen, Sparkles, ShieldCheck, Heart, ArrowRight, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FollowSocials } from "@/components/ui/social-links";
 
 export const metadata: Metadata = {
   title: "The Story Behind Reader — Built by Edgar Odey",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white flex-1">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 bg-white flex-1">
       {/* Header */}
       <div className="space-y-4 text-center md:text-left mb-10">
         <Badge variant="brand" className="py-1 px-3.5 text-xs font-semibold">
@@ -112,7 +113,7 @@ export default function AboutPage() {
           </div>
 
           <a
-            href="https://edgarodey.com"
+            href="https://edgarodey.com/experience"
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-600 text-white font-semibold text-xs hover:bg-brand-700 transition-all shadow-xs"
@@ -120,6 +121,9 @@ export default function AboutPage() {
             Visit Portfolio <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </section>
+
+        {/* Follow on Socials Card */}
+        <FollowSocials variant="card" title="Follow Edgar on socials for updates" />
       </div>
     </div>
   );

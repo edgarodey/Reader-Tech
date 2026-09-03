@@ -6,18 +6,32 @@ export interface ExtractedLine {
   isHeading?: boolean;
 }
 
+/**
+ * Removes OCR scanning artifacts and normalizes whitespace
+ */
 export function cleanRawText(text: string): string {
   if (!text) return "";
-  
-  return text
+
+  let cleaned = text
     // Replace non-standard whitespace and form feeds
     .replace(/[\f\v\r]+/g, " ")
     .replace(/\u00A0/g, " ")
     // Fix hyphenated words broken across line wraps (e.g. "struc-\nture" -> "structure")
     .replace(/(\w+)-\s*\n\s*(\w+)/g, "$1$2")
-    // Fix multiple spaces
-    .replace(/[ \t]+/g, " ")
-    .trim();
+    // Remove typical OCR border artifacts, stray margin vertical bars, and repeated divider lines
+    .replace(/^[ \t]*[\|\_\-—=~*]{3,}[ \t]*$/gm, "")
+    .replace(/[ \t]*\|[ \t]*/g, " ")
+    // Fix multiple horizontal spaces and tabs
+    .replace(/[ \t]+/g, " ");
+
+  // Smart unwrapping for lines that break mid-sentence (common in OCR & PDF extraction)
+  // If line ends with a letter or comma and the next line begins with a lowercase letter or normal word, join them
+  cleaned = cleaned.replace(
+    /([a-zA-Z0-9,;])\n(?!\n)(?=[a-zA-Z0-9])/g,
+    "$1 "
+  );
+
+  return cleaned.trim();
 }
 
 /**
@@ -34,11 +48,14 @@ export function segmentPageIntoBlocks(
     return { blocks: [], nextIndex: startIndex };
   }
 
-  // Split into rough paragraphs by double newlines or significant line breaks
+  // Split into paragraphs by double newlines or significant line breaks
   const rawParagraphs = cleaned
     .split(/\n\s*\n+/)
     .map((p) => p.trim())
-    .filter((p) => p.length > 0);
+    .filter((p) => {
+      // Must contain at least one speakable alphanumeric character
+      return p.length > 0 && /[a-zA-Z0-9]/.test(p);
+    });
 
   const blocks: any[] = [];
   let currentIndex = startIndex;
@@ -46,7 +63,7 @@ export function segmentPageIntoBlocks(
   for (const rawPara of rawParagraphs) {
     // Determine block type
     let type: "heading" | "paragraph" | "list" = "paragraph";
-    
+
     // Check if short line and starts with uppercase or number header pattern
     const isShort = rawPara.length < 85 && !rawPara.endsWith(".");
     const isNumberedHeading = /^(chapter|module|unit|section|\d+\.?\d*)\s+/i.test(rawPara);
@@ -72,3 +89,4 @@ export function segmentPageIntoBlocks(
 
   return { blocks, nextIndex: currentIndex };
 }
+

@@ -3,6 +3,8 @@ import { WebSpeechEngine } from "./web-speech";
 import { LocalModelEngine } from "./local-model";
 import { SpeechChunk } from "../reader/chunker";
 import { saveProgress } from "../storage/documents";
+import { getBackgroundAudioManager, BackgroundAudioManager } from "./background-audio";
+import { getMediaSessionManager, MediaSessionManager } from "./media-session";
 
 export interface SpeechControllerListener {
   onStatusChange?: (status: TTSStatus) => void;
@@ -18,8 +20,12 @@ export class SpeechController {
   private currentChunkIndex: number = -1;
   private status: TTSStatus = "idle";
   private documentId: string | null = null;
+  private documentName: string = "Course Material";
+  private totalPages: number = 1;
   private listeners: Set<SpeechControllerListener> = new Set();
   private options: TTSPlaybackOptions = { rate: 1.0, pitch: 1.0, volume: 1.0 };
+  private backgroundAudio: BackgroundAudioManager;
+  private mediaSession: MediaSessionManager;
 
   constructor() {
     const webSpeech = new WebSpeechEngine();
@@ -29,6 +35,23 @@ export class SpeechController {
     this.engines.set(localModel.id, localModel);
 
     this.activeEngine = webSpeech;
+    this.backgroundAudio = getBackgroundAudioManager();
+    this.mediaSession = getMediaSessionManager();
+
+    // Wire native MediaSession controls (iOS Control Center / Android Lockscreen / Media Keys)
+    this.mediaSession.registerHandlers({
+      onPlay: () => this.play(),
+      onPause: () => this.pause(),
+      onPreviousTrack: () => this.prevChunk(),
+      onNextTrack: () => this.nextChunk(),
+      onStop: () => this.stop(),
+    });
+  }
+
+  public setDocumentInfo(name: string, totalPages: number) {
+    this.documentName = name;
+    this.totalPages = totalPages;
+    this.syncMediaSession();
   }
 
   public setEngine(engineId: string) {
@@ -56,13 +79,21 @@ export class SpeechController {
     return () => this.listeners.delete(listener);
   }
 
-  public loadChunks(docId: string, chunks: SpeechChunk[], initialChunkIndex = 0) {
+  public loadChunks(
+    docId: string,
+    chunks: SpeechChunk[],
+    initialChunkIndex = 0,
+    docInfo?: { name?: string; totalPages?: number }
+  ) {
     this.stop();
     this.documentId = docId;
+    if (docInfo?.name) this.documentName = docInfo.name;
+    if (docInfo?.totalPages) this.totalPages = docInfo.totalPages;
     this.chunks = chunks;
     this.currentChunkIndex = Math.max(0, Math.min(initialChunkIndex, chunks.length - 1));
     this.setStatus("idle");
     this.notifyChunkChange();
+    this.syncMediaSession();
   }
 
   public setOptions(options: Partial<TTSPlaybackOptions>) {
@@ -94,9 +125,13 @@ export class SpeechController {
   public play() {
     if (this.chunks.length === 0) return;
 
+    // Start background audio session (silent loop + wake lock) to persist when phone locks
+    this.backgroundAudio.start().catch(() => {});
+
     if (this.status === "paused") {
       this.activeEngine.resume();
       this.setStatus("playing");
+      this.mediaSession.setPlaybackState("playing");
       return;
     }
 
@@ -110,20 +145,35 @@ export class SpeechController {
   public pause() {
     if (this.status === "playing") {
       this.activeEngine.pause();
+      this.backgroundAudio.pause();
       this.setStatus("paused");
+      this.mediaSession.setPlaybackState("paused");
     }
   }
 
   public stop() {
     this.activeEngine.stop();
+    this.backgroundAudio.stop();
     this.setStatus("idle");
+    this.mediaSession.setPlaybackState("none");
+  }
+
+  public unstick() {
+    // Quick recovery for when browser speech engine stalls
+    this.stop();
+    setTimeout(() => {
+      this.play();
+    }, 100);
   }
 
   public playChunkAtIndex(index: number) {
     if (index < 0 || index >= this.chunks.length) return;
     this.stop();
     this.currentChunkIndex = index;
-    this.speakCurrentChunk();
+    // Allow stop/cancel cycle to clear before speaking next chunk
+    setTimeout(() => {
+      this.speakCurrentChunk();
+    }, 60);
   }
 
   public nextChunk() {
@@ -150,37 +200,64 @@ export class SpeechController {
     const chunk = this.getCurrentChunk();
     if (!chunk) {
       this.setStatus("idle");
+      this.mediaSession.setPlaybackState("none");
+      this.backgroundAudio.stop();
       return;
     }
 
     this.setStatus("playing");
+    this.mediaSession.setPlaybackState("playing");
     this.notifyChunkChange();
+    this.syncMediaSession();
     this.persistCurrentProgress();
+
+    // Ensure background audio session remains active for lockscreen persistence
+    this.backgroundAudio.start().catch(() => {});
 
     this.activeEngine.speak(chunk.text, this.options, {
       onStart: () => {
         this.setStatus("playing");
+        this.mediaSession.setPlaybackState("playing");
       },
       onEnd: () => {
         if (this.status === "playing") {
           if (this.currentChunkIndex + 1 < this.chunks.length) {
             this.currentChunkIndex++;
-            this.speakCurrentChunk();
+            // Small pause between sentences for natural cadenced speech
+            setTimeout(() => {
+              if (this.status === "playing") {
+                this.speakCurrentChunk();
+              }
+            }, 80);
           } else {
             this.setStatus("idle");
+            this.mediaSession.setPlaybackState("none");
+            this.backgroundAudio.stop();
             this.notifyChunkChange();
           }
         }
       },
       onPause: () => {
         this.setStatus("paused");
+        this.mediaSession.setPlaybackState("paused");
+        this.backgroundAudio.pause();
       },
       onResume: () => {
         this.setStatus("playing");
+        this.mediaSession.setPlaybackState("playing");
+        this.backgroundAudio.start().catch(() => {});
       },
       onError: (err) => {
-        this.setStatus("error");
-        this.listeners.forEach((l) => l.onError?.(err));
+        console.warn("TTS chunk playback error, attempting recovery:", err);
+        // If an individual chunk errors, don't crash the entire session; advance to next
+        if (this.status === "playing" && this.currentChunkIndex + 1 < this.chunks.length) {
+          this.currentChunkIndex++;
+          setTimeout(() => this.speakCurrentChunk(), 150);
+        } else {
+          this.setStatus("error");
+          this.backgroundAudio.pause();
+          this.listeners.forEach((l) => l.onError?.(err));
+        }
       },
       onBoundary: (charIndex, charLength) => {
         this.listeners.forEach((l) => l.onBoundary?.(charIndex, charLength));
@@ -196,6 +273,17 @@ export class SpeechController {
   private notifyChunkChange() {
     const chunk = this.getCurrentChunk();
     this.listeners.forEach((l) => l.onChunkChange?.(this.currentChunkIndex, chunk));
+  }
+
+  private syncMediaSession() {
+    const chunk = this.getCurrentChunk();
+    this.mediaSession.updateMetadata({
+      title: chunk ? chunk.text : this.documentName,
+      documentName: this.documentName,
+      pageNumber: chunk?.pageNumber || 1,
+      totalPages: this.totalPages,
+      snippet: chunk ? chunk.text : undefined,
+    });
   }
 
   private async persistCurrentProgress() {
@@ -229,3 +317,4 @@ export function getSpeechController(): SpeechController {
   }
   return speechControllerInstance;
 }
+

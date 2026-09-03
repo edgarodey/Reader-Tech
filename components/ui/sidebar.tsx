@@ -16,6 +16,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FollowSocials } from "./social-links";
 
 interface SidebarContextType {
   isOpen: boolean;
@@ -176,6 +177,8 @@ export function Sidebar() {
 
         {/* Sidebar Footer Info */}
         <div className="p-4 border-t border-slate-100 bg-slate-50/70 space-y-3">
+          <FollowSocials variant="sidebar" />
+
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 p-2.5 rounded-xl">
             <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600" />
             <span className="text-[11px] leading-tight">100% In-Browser Privacy</span>
