@@ -10,7 +10,9 @@ import {
   Gauge,
   Sparkles,
   Search,
-  Check
+  Check,
+  RotateCcw,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SpeechChunk } from "@/lib/reader/chunker";
@@ -31,6 +33,7 @@ interface PlaybackBarProps {
   voices: VoiceOption[];
   selectedVoiceId?: string;
   onSelectVoice: (voiceId: string) => void;
+  onUnstick?: () => void;
 }
 
 export function PlaybackBar({
@@ -48,15 +51,18 @@ export function PlaybackBar({
   voices,
   selectedVoiceId,
   onSelectVoice,
+  onUnstick,
 }: PlaybackBarProps) {
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
   const [voiceMenuOpen, setVoiceMenuOpen] = useState(false);
   const [voiceSearch, setVoiceSearch] = useState("");
 
   const isPlaying = status === "playing";
+  const isError = status === "error";
   const percent = totalChunks > 0 ? Math.round(((currentChunkIndex + 1) / totalChunks) * 100) : 0;
 
   const speedOptions = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+
 
   const filteredVoices = useMemo(() => {
     if (!voiceSearch.trim()) return voices;
@@ -93,12 +99,19 @@ export function PlaybackBar({
 
         {/* Playback Controls Row */}
         <div className="flex items-center justify-between gap-2">
-          {/* Left: Current Sentence Preview */}
+          {/* Left: Current Sentence Preview & Lockscreen indicator */}
           <div className="hidden sm:flex items-center gap-2 min-w-0 flex-1 pr-4">
             <Volume2 className="w-4 h-4 text-brand-600 shrink-0" />
-            <p className="text-xs text-slate-700 truncate italic font-medium">
+            <p className="text-xs text-slate-700 truncate italic font-medium max-w-[280px] lg:max-w-md">
               {currentChunk ? `"${currentChunk.text}"` : "Ready to listen"}
             </p>
+            <span
+              className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full shrink-0 ml-1"
+              title="Silent audio loop & MediaSession active. Audio keeps playing when screen locks or switching apps."
+            >
+              <Headphones className="w-2.5 h-2.5 text-emerald-600" />
+              Lockscreen Audio
+            </span>
           </div>
 
           {/* Center: Main Buttons */}
@@ -141,6 +154,21 @@ export function PlaybackBar({
             >
               <SkipForward className="w-4 h-4" />
             </Button>
+
+            {/* Unstick / Restart Voice if stuck or error */}
+            {onUnstick && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onUnstick}
+                title="Restart / Unstick Voice Engine"
+                className={`h-8 w-8 text-slate-500 hover:text-slate-900 ${
+                  isError ? "text-red-500 animate-pulse" : ""
+                }`}
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </Button>
+            )}
           </div>
 
           {/* Right: Speed & Voice Pickers */}

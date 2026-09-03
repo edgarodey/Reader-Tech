@@ -106,12 +106,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-white text-slate-900 selection:bg-brand-100 selection:text-brand-900`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-white text-slate-900 selection:bg-brand-100 selection:text-brand-900 w-full max-w-full overflow-x-hidden`}
       >
         <SidebarProvider>
           <Sidebar />
           <Navbar />
-          <main className="flex-1 flex flex-col">{children}</main>
+          <main className="flex-1 flex flex-col w-full max-w-full overflow-x-hidden">{children}</main>
           <Footer />
         </SidebarProvider>
       </body>

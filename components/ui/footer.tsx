@@ -1,10 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
+import { FollowSocials } from "./social-links";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 mt-auto py-10">
+    <footer className="border-t border-slate-200 bg-slate-50 mt-auto py-10 w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-start justify-between gap-8">
           {/* Brand and Tagline */}
@@ -16,9 +17,8 @@ export function Footer() {
                 Open-source local-first study reader
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-2 flex items-start gap-2 leading-relaxed text-left">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>Your course PDFs never leave your browser. Zero cloud uploads.</span>
+            <p className="text-xs text-slate-500 mt-1.5 leading-relaxed text-left">
+              Your course PDFs never leave your browser. Zero cloud uploads.
             </p>
           </div>
 
@@ -39,19 +39,23 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-slate-500 gap-2 text-left">
+        <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-slate-500 gap-4 text-left">
           <span>Designed for university students and distance learners everywhere</span>
-          <span className="flex items-center gap-1 font-medium text-slate-700">
-            Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by{" "}
-            <a
-              href="https://edgarodey.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-brand-600 hover:text-brand-800 font-semibold underline decoration-brand-300 underline-offset-2 transition-colors"
-            >
-              Edgar Odey
-            </a>
-          </span>
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
+            <FollowSocials variant="compact" title="Follow for updates" />
+            <span className="flex items-center gap-1 font-medium text-slate-700">
+              Built with <Heart className="w-3 h-3 text-red-500 inline fill-red-500" /> by{" "}
+              <a
+                href="https://edgarodey.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-600 hover:text-brand-800 font-semibold underline decoration-brand-300 underline-offset-2 transition-colors"
+              >
+                Edgar Odey
+              </a>
+            </span>
+          </div>
         </div>
       </div>
     </footer>

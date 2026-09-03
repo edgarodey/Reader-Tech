@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { FollowSocials } from "@/components/ui/social-links";
 import { getAllDocuments, deleteDocument, getProgress } from "@/lib/storage/documents";
 import { DocumentRecord } from "@/lib/storage/db";
 import { formatBytes } from "@/lib/utils";
@@ -73,12 +74,12 @@ export default function LibraryPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 flex flex-col bg-white">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1 flex flex-col bg-white">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 w-full">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2.5">
-            <Library className="w-7 h-7 text-brand-600" />
+            <Library className="w-7 h-7 text-brand-600 shrink-0" />
             My Study Library
           </h1>
           <p className="text-sm text-slate-600 mt-1">
@@ -98,7 +99,7 @@ export default function LibraryPage() {
 
       {/* Search Bar */}
       {documents.length > 0 && (
-        <div className="relative mb-6">
+        <div className="relative mb-8 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
@@ -112,11 +113,11 @@ export default function LibraryPage() {
 
       {/* Document Grid */}
       {loading ? (
-        <div className="py-20 text-center text-slate-500">
+        <div className="py-20 text-center text-slate-500 w-full">
           <p className="text-sm">Loading your local documents...</p>
         </div>
       ) : filteredDocs.length === 0 ? (
-        <div className="py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50 p-8">
+        <div className="py-12 sm:py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50 p-6 sm:p-8 w-full max-w-full overflow-hidden">
           <FileText className="w-12 h-12 text-slate-400 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-900">No documents in library</h3>
           <p className="text-sm text-slate-600 max-w-sm mx-auto mt-1 mb-6">
@@ -131,7 +132,7 @@ export default function LibraryPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
           {filteredDocs.map((doc) => (
             <div
               key={doc.id}
@@ -201,6 +202,11 @@ export default function LibraryPage() {
           ))}
         </div>
       )}
+
+      {/* Follow on Socials Section */}
+      <div className="mt-12 pt-6 border-t border-slate-100">
+        <FollowSocials variant="card" title="Follow Edgar on socials for updates" />
+      </div>
 
       {/* Delete Confirmation Modal */}
       <Modal
