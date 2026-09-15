@@ -5,6 +5,8 @@ export interface VoiceOption {
   name: string;
   lang: string;
   accent?: string;
+  gender?: "male" | "female" | "neutral";
+  isNatural?: boolean;
   isDefault?: boolean;
   localService?: boolean;
 }

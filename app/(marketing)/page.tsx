@@ -197,7 +197,10 @@ export default function HomePage() {
               </div>
               <h3 className="text-lg font-bold text-slate-900">Your Materials Stay on Your Device</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Reader is built local-first. Your course PDFs are parsed in your browser rather than sent to cloud servers. No accounts, no subscriptions, no tracking.
+                Reader is built local-first. Your course PDFs are parsed in your browser rather than sent to cloud servers. No accounts, no subscriptions, no tracking.{" "}
+                <Link href="/privacy" className="text-brand-600 hover:text-brand-800 font-medium underline inline-flex items-center">
+                  Privacy Policy &rarr;
+                </Link>
               </p>
             </div>
           </div>

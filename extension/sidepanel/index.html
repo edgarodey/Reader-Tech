@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reader - Miva Study Panel</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="panel-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-badge">📚</div>
+        <div>
+          <h1 class="brand-title">Reader</h1>
+          <p class="brand-subtitle">Study Assistant</p>
+        </div>
+      </div>
+      <div class="tab-status" id="tabStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">Scanning...</span>
+      </div>
+    </header>
+
+    <!-- Document Info Card -->
+    <section class="doc-card" id="docCard">
+      <div class="doc-header">
+        <span class="doc-badge" id="docBadge">Miva Material</span>
+        <button id="btnOpenInApp" class="btn-secondary-sm" title="Open in full Reader dual-view web app">
+          Full App ↗
+        </button>
+      </div>
+      <h2 class="doc-title" id="docTitle">Detecting course material...</h2>
+      <p class="doc-url" id="docUrl">Open your Miva course tab</p>
+    </section>
+
+    <!-- Reading Sentence View -->
+    <section class="reading-section">
+      <div class="section-header">
+        <span class="section-label">Active Sentence</span>
+        <span class="chunk-counter" id="chunkCounter">0 / 0</span>
+      </div>
+      <div class="sentence-box" id="sentenceBox">
+        <p id="sentenceText">Click &quot;Fetch Course Material&quot; or Play below to begin listening.</p>
+      </div>
+    </section>
+
+    <!-- Progress Scrubber -->
+    <div class="progress-container">
+      <input type="range" id="progressSlider" min="0" max="100" value="0" class="slider">
+      <div class="progress-labels">
+        <span id="progressPercent">0%</span>
+        <span id="progressEstimate">--:-- left</span>
+      </div>
+    </div>
+
+    <!-- Playback Controls -->
+    <div class="controls-container">
+      <button id="btnPrev" class="ctrl-btn" title="Previous Sentence">⏮</button>
+      <button id="btnPlay" class="ctrl-btn play-btn" title="Play / Pause">▶</button>
+      <button id="btnNext" class="ctrl-btn" title="Next Sentence">⏭</button>
+    </div>
+
+    <!-- Voice & Pacing Settings -->
+    <section class="settings-section">
+      <div class="settings-row">
+        <!-- 1-Tap Male / Female Quick Switcher -->
+        <button id="btnGenderToggle" class="gender-btn" title="1-tap switch between Male and Female voice">
+          👩 Female
+        </button>
+
+        <!-- Speed Selector -->
+        <select id="selectSpeed" class="select-dropdown">
+          <option value="0.75">0.75x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="1.75">1.75x</option>
+          <option value="2.0">2.0x</option>
+        </select>
+      </div>
+
+      <!-- Voice Selector -->
+      <div class="voice-picker-row">
+        <label for="selectVoice" class="voice-label">Speech Voice</label>
+        <select id="selectVoice" class="select-dropdown full-width">
+          <option value="">Loading system voices...</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Quick Action / Status Footer -->
+    <footer class="footer">
+      <button id="btnFetchText" class="btn-primary-full">
+        ⚡ Read Current Miva Page
+      </button>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

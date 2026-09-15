@@ -130,6 +130,12 @@ function ReaderContent() {
         setVoices(loadedVoices);
 
         await updateLastOpened(docId!);
+
+        if (searchParams.get("autoplay") === "true") {
+          setTimeout(() => {
+            controller.play();
+          }, 300);
+        }
       } catch (err: any) {
         console.error("Failed to load reader data:", err);
         setError(err.message || "Failed to load document");

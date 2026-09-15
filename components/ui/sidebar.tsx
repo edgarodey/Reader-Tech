@@ -9,11 +9,10 @@ import {
   Settings,
   BookOpen,
   HelpCircle,
-  Code,
   X,
   ShieldCheck,
   Heart,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FollowSocials } from "./social-links";
@@ -72,7 +71,6 @@ export function Sidebar() {
     { href: "/settings", label: "Settings", icon: Settings, desc: "Speech voices & reading style" },
     { href: "/about", label: "About", icon: BookOpen, desc: "Origin story & mission" },
     { href: "/help", label: "Help & FAQ", icon: HelpCircle, desc: "Interactive student guides" },
-    { href: "/open-source", label: "Open Source", icon: Code, desc: "GitHub & Non-commercial license" },
   ];
 
   return (

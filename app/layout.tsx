@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://reader-tech.vercel.app"),
+  metadataBase: new URL("https://reader.edgarodey.com"),
   title: {
     default: "Reader — Free, Local-First Academic PDF Study Companion",
     template: "%s | Reader",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://reader-tech.vercel.app",
+    url: "https://reader.edgarodey.com",
     siteName: "Reader",
     title: "Reader — Free, Local-First Academic PDF Study Companion",
     description:
@@ -76,7 +76,12 @@ export const metadata: Metadata = {
     creator: "@edgarodey",
   },
   alternates: {
-    canonical: "https://reader-tech.vercel.app",
+    canonical: "https://reader.edgarodey.com",
+  },
+  verification: {
+    google:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+      process.env.GOOGLE_SITE_VERIFICATION,
   },
   robots: {
     index: true,
