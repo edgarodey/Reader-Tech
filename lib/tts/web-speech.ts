@@ -40,14 +40,60 @@ export class WebSpeechEngine implements TTSEngine {
     };
 
     const rawVoices = await loadVoices();
-    this.voicesCache = rawVoices.map((v) => ({
-      id: v.voiceURI || v.name,
-      name: v.name,
-      lang: v.lang,
-      isDefault: v.default,
-      localService: v.localService,
-      accent: v.lang.includes("NG") ? "Nigerian English" : v.lang,
-    }));
+    const mapped = rawVoices.map((v) => {
+      const lower = (v.name + " " + (v.voiceURI || "")).toLowerCase();
+      
+      // Gender detection heuristics across Windows, Chrome, Edge, Apple, Android
+      let gender: "male" | "female" | "neutral" = "neutral";
+      if (
+        /\b(david|guy|george|james|mark|daniel|oliver|arthur|stefan|ryan|liam|richard|tom|thomas|alex|fred|ralph|junior|albert|male|en-us-standard-b|en-us-standard-d|en-us-wavenet-b|en-us-wavenet-d|en-gb-wavenet-b|en-gb-wavenet-d)\b/i.test(lower) ||
+        lower.includes("(male)") ||
+        lower.includes("guy online") ||
+        lower.includes("david online")
+      ) {
+        gender = "male";
+      } else if (
+        /\b(zira|jenny|sonia|aria|sara|sarah|emma|ava|samantha|victoria|karen|catherine|susan|hazel|heera|female|en-us-standard-a|en-us-standard-c|en-us-standard-e|en-us-wavenet-a|en-us-wavenet-c|en-us-wavenet-e|en-gb-wavenet-a|en-gb-wavenet-c)\b/i.test(lower) ||
+        lower.includes("(female)") ||
+        lower.includes("jenny online") ||
+        lower.includes("aria online")
+      ) {
+        gender = "female";
+      }
+
+      const isNatural =
+        lower.includes("natural") ||
+        lower.includes("neural") ||
+        lower.includes("online") ||
+        lower.includes("google") ||
+        lower.includes("enhanced") ||
+        lower.includes("premium") ||
+        lower.includes("wavenet");
+
+      return {
+        id: v.voiceURI || v.name,
+        name: v.name,
+        lang: v.lang,
+        isDefault: v.default,
+        localService: v.localService,
+        accent: v.lang.includes("NG") ? "Nigerian English" : v.lang,
+        gender,
+        isNatural,
+      };
+    });
+
+    // Sort voices: Prioritize Natural/Online, then Nigerian/English, then others
+    this.voicesCache = mapped.sort((a, b) => {
+      // 1. Natural voices first
+      if (a.isNatural && !b.isNatural) return -1;
+      if (!a.isNatural && b.isNatural) return 1;
+      // 2. English accents (NG, GB, US) next
+      const aIsEn = a.lang.toLowerCase().startsWith("en");
+      const bIsEn = b.lang.toLowerCase().startsWith("en");
+      if (aIsEn && !bIsEn) return -1;
+      if (!aIsEn && bIsEn) return 1;
+      return 0;
+    });
 
     return this.voicesCache;
   }
@@ -88,18 +134,20 @@ export class WebSpeechEngine implements TTSEngine {
     const utterance = new SpeechSynthesisUtterance(text);
     this.currentUtterance = utterance;
 
-    // Apply speech options
-    if (options.rate) utterance.rate = Math.max(0.5, Math.min(2.5, options.rate));
-    if (options.pitch) utterance.pitch = Math.max(0.5, Math.min(1.5, options.pitch));
+    // Apply speech options with natural prosody defaults
+    utterance.rate = options.rate !== undefined ? Math.max(0.5, Math.min(2.5, options.rate)) : 0.98;
+    utterance.pitch = options.pitch !== undefined ? Math.max(0.5, Math.min(1.5, options.pitch)) : 1.02;
     if (options.volume !== undefined) utterance.volume = Math.max(0, Math.min(1, options.volume));
 
-    // Match voice if requested
+    // Match voice if requested, or auto-fallback to the best natural voice in cache
+    const rawVoices = window.speechSynthesis.getVoices();
     if (options.voiceId) {
-      const rawVoices = window.speechSynthesis.getVoices();
       const matched = rawVoices.find((v) => (v.voiceURI || v.name) === options.voiceId);
-      if (matched) {
-        utterance.voice = matched;
-      }
+      if (matched) utterance.voice = matched;
+    } else if (this.voicesCache.length > 0) {
+      const bestVoice = this.voicesCache[0];
+      const matched = rawVoices.find((v) => (v.voiceURI || v.name) === bestVoice.id);
+      if (matched) utterance.voice = matched;
     }
 
     // Dynamic Watchdog: estimate duration + generous safety buffer (prevent permanent hanging)

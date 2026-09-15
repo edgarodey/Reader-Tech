@@ -56,6 +56,7 @@ export function PlaybackBar({
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
   const [voiceMenuOpen, setVoiceMenuOpen] = useState(false);
   const [voiceSearch, setVoiceSearch] = useState("");
+  const [voiceCategory, setVoiceCategory] = useState<"all" | "natural" | "male" | "female">("all");
 
   const isPlaying = status === "playing";
   const isError = status === "error";
@@ -63,18 +64,47 @@ export function PlaybackBar({
 
   const speedOptions = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
+  const currentVoice = useMemo(() => {
+    return voices.find((v) => v.id === selectedVoiceId) || voices[0] || null;
+  }, [voices, selectedVoiceId]);
+
+  const currentVoiceName = currentVoice?.name || "Default Voice";
+
+  const toggleGender = () => {
+    const isCurrentlyMale = currentVoice?.gender === "male";
+    const targetGender = isCurrentlyMale ? "female" : "male";
+    
+    // Find best match in target gender (natural voices prioritized)
+    const match =
+      voices.find((v) => v.gender === targetGender && v.isNatural) ||
+      voices.find((v) => v.gender === targetGender);
+
+    if (match) {
+      onSelectVoice(match.id);
+    } else {
+      // Fallback to any voice with opposite gender heuristics
+      const fallback = voices.find((v) => (isCurrentlyMale ? v.gender !== "male" : v.gender === "male"));
+      if (fallback) onSelectVoice(fallback.id);
+    }
+  };
 
   const filteredVoices = useMemo(() => {
-    if (!voiceSearch.trim()) return voices;
-    const query = voiceSearch.toLowerCase();
-    return voices.filter(
-      (v) => v.name.toLowerCase().includes(query) || v.lang.toLowerCase().includes(query)
-    );
-  }, [voices, voiceSearch]);
+    return voices.filter((v) => {
+      // Category filter
+      if (voiceCategory === "natural" && !v.isNatural) return false;
+      if (voiceCategory === "male" && v.gender !== "male") return false;
+      if (voiceCategory === "female" && v.gender !== "female") return false;
 
-  const currentVoiceName = useMemo(() => {
-    return voices.find((v) => v.id === selectedVoiceId)?.name || "Default Voice";
-  }, [voices, selectedVoiceId]);
+      // Text search
+      if (!voiceSearch.trim()) return true;
+      const query = voiceSearch.toLowerCase();
+      return (
+        v.name.toLowerCase().includes(query) ||
+        v.lang.toLowerCase().includes(query) ||
+        (v.accent && v.accent.toLowerCase().includes(query))
+      );
+    });
+  }, [voices, voiceSearch, voiceCategory]);
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-xl p-3 sm:p-4">
@@ -210,7 +240,26 @@ export function PlaybackBar({
               )}
             </div>
 
-            {/* Voice Control (Fixed vertical clipping & readable list) */}
+            {/* 1-Tap Male / Female Quick Switcher */}
+            {voices.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleGender}
+                title="1-tap switch between Male and Female voice"
+                className="text-xs h-8 px-2.5 font-medium border-slate-200 text-slate-700 hover:text-brand-700 hover:border-brand-300 bg-white shrink-0 shadow-2xs"
+              >
+                {currentVoice?.gender === "male" ? (
+                  <span className="flex items-center gap-1">👨 <span className="hidden sm:inline">Male</span></span>
+                ) : currentVoice?.gender === "female" ? (
+                  <span className="flex items-center gap-1">👩 <span className="hidden sm:inline">Female</span></span>
+                ) : (
+                  <span className="flex items-center gap-1">🎙️ <span className="hidden sm:inline">Voice</span></span>
+                )}
+              </Button>
+            )}
+
+            {/* Voice Dropdown Menu */}
             {voices.length > 0 && (
               <div className="relative">
                 <Button
@@ -220,24 +269,48 @@ export function PlaybackBar({
                     setVoiceMenuOpen(!voiceMenuOpen);
                     setSpeedMenuOpen(false);
                   }}
-                  className="text-xs h-8 px-2.5 text-brand-800 max-w-[120px] sm:max-w-[160px] truncate font-medium"
+                  className="text-xs h-8 px-2.5 text-brand-800 max-w-[110px] sm:max-w-[150px] truncate font-medium"
                 >
                   <Sparkles className="w-3.5 h-3.5 mr-1 text-brand-600 shrink-0" />
                   <span className="truncate">{currentVoiceName}</span>
                 </Button>
 
                 {voiceMenuOpen && (
-                  <div className="absolute bottom-full right-0 mb-3 p-3 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 flex flex-col gap-2 w-72 sm:w-84 max-h-80 animate-in fade-in text-slate-900">
+                  <div className="absolute bottom-full right-0 mb-3 p-3 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 flex flex-col gap-2 w-76 sm:w-88 max-h-96 animate-in fade-in text-slate-900">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                        Speech Voices ({voices.length})
+                        Speech Voices ({filteredVoices.length})
                       </span>
                       <span className="text-[10px] text-brand-600 font-semibold">Web Speech API</span>
                     </div>
 
+                    {/* Category Filter Chips */}
+                    <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-xl">
+                      {(
+                        [
+                          { id: "all", label: "All" },
+                          { id: "natural", label: "✨ Natural" },
+                          { id: "male", label: "👨 Male" },
+                          { id: "female", label: "👩 Female" },
+                        ] as const
+                      ).map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setVoiceCategory(cat.id)}
+                          className={`flex-1 py-1 text-[11px] font-medium rounded-lg transition-all ${
+                            voiceCategory === cat.id
+                              ? "bg-white text-slate-900 shadow-xs font-semibold"
+                              : "text-slate-500 hover:text-slate-800"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+
                     {/* Search Input */}
                     {voices.length > 5 && (
-                      <div className="relative my-1">
+                      <div className="relative my-0.5">
                         <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                         <input
                           type="text"
@@ -250,7 +323,7 @@ export function PlaybackBar({
                     )}
 
                     {/* Voice List */}
-                    <div className="overflow-y-auto space-y-1 pr-1 max-h-52">
+                    <div className="overflow-y-auto space-y-1 pr-1 max-h-56">
                       {filteredVoices.map((v) => {
                         const isSelected = selectedVoiceId === v.id;
                         return (
@@ -260,16 +333,33 @@ export function PlaybackBar({
                               onSelectVoice(v.id);
                               setVoiceMenuOpen(false);
                             }}
-                            className={`w-full p-2.5 rounded-2xl text-left transition-all flex items-center justify-between gap-2 ${
+                            className={`w-full p-2 rounded-2xl text-left transition-all flex items-center justify-between gap-2 ${
                               isSelected
                                 ? "bg-brand-50 border border-brand-200 shadow-xs"
                                 : "hover:bg-slate-50 border border-transparent"
                             }`}
                           >
                             <div className="min-w-0 flex-1">
-                              <p className={`text-xs truncate ${isSelected ? "font-bold text-brand-900" : "font-medium text-slate-800"}`}>
-                                {v.name}
-                              </p>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <p className={`text-xs truncate ${isSelected ? "font-bold text-brand-900" : "font-medium text-slate-800"}`}>
+                                  {v.name}
+                                </p>
+                                {v.isNatural && (
+                                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 font-semibold shrink-0">
+                                    Natural
+                                  </span>
+                                )}
+                                {v.gender === "male" && (
+                                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-800 font-semibold shrink-0">
+                                    Male
+                                  </span>
+                                )}
+                                {v.gender === "female" && (
+                                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-pink-100 text-pink-800 font-semibold shrink-0">
+                                    Female
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-[10px] text-slate-500 font-mono mt-0.5">
                                 {v.lang} {v.accent ? `• ${v.accent}` : ""}
                               </p>
@@ -279,7 +369,7 @@ export function PlaybackBar({
                         );
                       })}
                       {filteredVoices.length === 0 && (
-                        <p className="text-center py-4 text-xs text-slate-400">No voices match your search.</p>
+                        <p className="text-center py-4 text-xs text-slate-400">No voices match your filters.</p>
                       )}
                     </div>
                   </div>

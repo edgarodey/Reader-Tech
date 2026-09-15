@@ -142,7 +142,7 @@ export default function SettingsPage() {
                   <option value="">Default System Voice</option>
                   {voices.map((v) => (
                     <option key={v.id} value={v.id}>
-                      {v.name} ({v.lang})
+                      {v.name} ({v.lang}) {v.gender === "male" ? "• 👨 Male" : v.gender === "female" ? "• 👩 Female" : ""} {v.isNatural ? "• ✨ Natural" : ""}
                     </option>
                   ))}
                 </select>
