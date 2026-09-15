@@ -30,11 +30,17 @@ export function Footer() {
             <Link href="/help" className="hover:text-brand-600 transition-colors">
               Help & FAQ
             </Link>
+            <Link href="/privacy" className="hover:text-brand-600 transition-colors font-semibold text-slate-700">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-brand-600 transition-colors">
+              Terms of Service
+            </Link>
             <Link href="/open-source" className="hover:text-brand-600 transition-colors">
               Open Source (PolyForm NC)
             </Link>
             <Link href="/settings" className="hover:text-brand-600 transition-colors">
-              Privacy & Settings
+              Settings
             </Link>
           </div>
         </div>

@@ -9,12 +9,10 @@ import {
   Settings,
   BookOpen,
   HelpCircle,
-  Code,
   X,
   ShieldCheck,
   Heart,
   ChevronRight,
-  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FollowSocials } from "./social-links";
@@ -70,11 +68,9 @@ export function Sidebar() {
 
   const navLinks = [
     { href: "/library", label: "Library", icon: Library, desc: "Your saved course PDFs" },
-    { href: "/import", label: "Miva Importer", icon: Zap, desc: "1-Click PDF transfer (zero download)" },
     { href: "/settings", label: "Settings", icon: Settings, desc: "Speech voices & reading style" },
     { href: "/about", label: "About", icon: BookOpen, desc: "Origin story & mission" },
     { href: "/help", label: "Help & FAQ", icon: HelpCircle, desc: "Interactive student guides" },
-    { href: "/open-source", label: "Open Source", icon: Code, desc: "GitHub & Non-commercial license" },
   ];
 
   return (
